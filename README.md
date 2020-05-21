@@ -1,7 +1,7 @@
 # PUM
 
-This repository contains the code we used for the "Nightingale Contest Spain" created by @RLadiesBIO (https://github.com/rladies/spain_nightingale/).
+This repository contains the code we used for the "Nightingale Contest Spain" created by [@RLadiesBIO](https://twitter.com/RLadiesBIO) (https://github.com/rladies/spain_nightingale/).
 
-Repository managed by Marta Bofill (@martabofillr
-), Guillermo Villacampa (@G_Villacampa
-) and Pol Castellano (@polcastellano_).
+Repository managed by Marta Bofill ([@martabofillr](https://twitter.com/martabofillr))
+), Guillermo Villacampa ([@G_Villacampa](https://twitter.com/G_Villacampa))
+) and Pol Castellano ([@polcastellano_](https://twitter.com/polcastellano_)).
