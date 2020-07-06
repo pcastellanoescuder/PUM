@@ -170,7 +170,7 @@ shiny::shinyApp(
               collapsible = TRUE,
               collapsed = TRUE,
               closable = FALSE,
-              DT::dataTableOutput("distribution_plots")
+              plotly::plotlyOutput("distribution_plots")
             ) # here
           )
         )
@@ -199,18 +199,36 @@ shiny::shinyApp(
         data,
         class = 'cell-border stripe',
         rownames = FALSE, 
+        filter = 'top',
         options = list(
           scrollX = TRUE,
           pageLength = 25
         )
       )
+      
+      # save(data, "proc_data.RData")
+      
     })
     
     ## VIZ - DISTRIBUTION ----------------------------------------------------------------------
     
-    output$distribution_plots <- DT::renderDataTable({
+    output$distribution_plots <- plotly::renderPlotly({
       
-
+      load("data/proc_data.RData")
+      
+      data <- data %>%
+        select_if(is.numeric) %>%
+        stack()
+      
+      plotly::ggplotly(
+        ggplot(data, aes(x = values, color = ind)) +
+          geom_line(stat = "density") +
+          theme_bw() +
+          xlab("") +
+          ylab("Density") +
+          facet_wrap(~ ind, scales = "free") +
+          theme(legend.position = "none")
+      )
     })
     
   }
