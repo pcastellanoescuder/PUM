@@ -12,7 +12,14 @@ shiny::shinyApp(
     
     ## NAVBAR ----------------------------------------------------------------------
     
-    navbar = bs4DashNavbar(),
+    navbar = bs4DashNavbar(
+      skin = "dark",
+      status = "gray-light",
+      border = TRUE,
+      sidebarIcon = "bars",
+      controlbarIcon = "th",
+      fixed = FALSE
+    ),
     
     ## SIDEBAR ----------------------------------------------------------------------
     
@@ -47,8 +54,8 @@ shiny::shinyApp(
           icon = "sliders"
         ),
         bs4SidebarMenuItem(
-          "Contact",
-          tabName = "contact",
+          "About Us",
+          tabName = "about",
           icon = "id-card"
         )
       )
@@ -73,7 +80,7 @@ shiny::shinyApp(
         href = "https://twitter.com/G_Villacampa",
         target = "_blank", "@G_Villacampa"
       ),
-      right_text = "2020"
+      right_text = "2020, MIT License"
     ),
     
     ## BODY ----------------------------------------------------------------------
@@ -89,50 +96,39 @@ shiny::shinyApp(
             column(width = 6,
                    bs4Dash::bs4Card(
                      width = 12,
-                     inputId = "history_card",
-                     title = "History",
-                     status = "danger",
-                     solidHeader = FALSE,
-                     collapsible = TRUE,
-                     collapsed = TRUE,
-                     closable = FALSE
-                     # DT::dataTableOutput("overview_annotation")
-                   ),
-                   bs4Dash::bs4Card(
-                     width = 12,
                      inputId = "florence_card",
                      title = "About Florence",
                      status = "info",
                      solidHeader = FALSE,
                      collapsible = TRUE,
                      collapsed = TRUE,
-                     closable = FALSE
-                     # DT::dataTableOutput("overview_annotation")
+                     closable = FALSE,
+                     includeMarkdown("mds/florence.md")
+                   ),
+                   bs4Dash::bs4Card(
+                     width = 12,
+                     inputId = "crimean_card",
+                     title = "Crimean War",
+                     status = "danger",
+                     solidHeader = FALSE,
+                     collapsible = TRUE,
+                     collapsed = TRUE,
+                     closable = FALSE,
+                     includeMarkdown("mds/crimean_war.md")
                    )
             ),
             
             column(width = 6,
                    bs4Dash::bs4Card(
                      width = 12,
-                     inputId = "x_card",
-                     title = "X",
+                     inputId = "contributions_card",
+                     title = "Contributions",
                      status = "success",
                      solidHeader = FALSE,
                      collapsible = TRUE,
                      collapsed = TRUE,
-                     closable = FALSE
-                     # DT::dataTableOutput("overview_annotation")
-                   ),
-                   bs4Dash::bs4Card(
-                     width = 12,
-                     inputId = "y_card",
-                     title = "Y",
-                     status = "light",
-                     solidHeader = FALSE,
-                     collapsible = TRUE,
-                     collapsed = TRUE,
-                     closable = FALSE
-                     # DT::dataTableOutput("overview_annotation")
+                     closable = FALSE,
+                     includeMarkdown("mds/contributions.md")
                    )
             )
           )
@@ -142,20 +138,82 @@ shiny::shinyApp(
         
         bs4TabItem(
           tabName = "data",
-          bs4Card(
-            title = "Card with messages",
-            width = 9
-            
+          fluidRow(
+            bs4Dash::bs4Card(
+              width = 12,
+              inputId = "data_card",
+              title = "Florence Nightingale Data",
+              status = "info",
+              solidHeader = FALSE,
+              collapsible = FALSE,
+              collapsed = FALSE,
+              closable = FALSE,
+              DT::dataTableOutput("florence_data")
+            )
           )
-        )
+        ),
         
         ## VIZ ----------------------------------------------------------------------
+        
+        bs4TabItem(
+          tabName = "viz",
+          
+          ## DISTRIBUTION PLOTS -----------------------------------------------------
+          
+          fluidRow(
+            bs4Dash::bs4Card(
+              width = 12,
+              inputId = "distribution_card",
+              title = "Distribution Plots",
+              status = "info",
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = TRUE,
+              closable = FALSE,
+              DT::dataTableOutput("distribution_plots")
+            ) # here
+          )
+        )
         
       ) # bs4TabItems
     ) # bs4DashBody
   ),
   
-  server = function(input, output) {}
+  server = function(input, output, session) {
+    
+    ## DATA ----------------------------------------------------------------------
+    
+    output$florence_data <- DT::renderDataTable({
+      
+      data <- readxl::read_xlsx("data/datos_florence.xlsx") %>%
+        janitor::row_to_names(row_number = 1) %>%
+        janitor::clean_names() %>%
+        rename_at(vars(zymotic_diseases:all_other_causes), ~ paste0(., "_deaths")) %>%
+        rename_at(vars(ends_with("_2")), ~ paste0(., "_MR1000")) %>%
+        rename_at(vars(ends_with("_MR1000")), ~ stringr::str_remove(., "_2")) %>%
+        mutate_at(vars(average_size_of_army:all_other_causes_MR1000), as.numeric) %>%
+        mutate(month = stringr::str_replace(month, "_", " "),
+               month = stringr::str_trim(month))
+        
+      DT::datatable(
+        data,
+        class = 'cell-border stripe',
+        rownames = FALSE, 
+        options = list(
+          scrollX = TRUE,
+          pageLength = 25
+        )
+      )
+    })
+    
+    ## VIZ - DISTRIBUTION ----------------------------------------------------------------------
+    
+    output$distribution_plots <- DT::renderDataTable({
+      
+
+    })
+    
+  }
   
 )
 
