@@ -1,4 +1,6 @@
 
+# Script: http://finzi.psych.upenn.edu/R/library/HistData/html/Nightingale.html
+
 library(HistData)
 data(Nightingale)
 # For some graphs, it is more convenient to reshape death rates to long format
