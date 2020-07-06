@@ -158,19 +158,19 @@ shiny::shinyApp(
         bs4TabItem(
           tabName = "viz",
           
-          ## DISTRIBUTION PLOTS -----------------------------------------------------
+          ## FLORENCE PLOTS -----------------------------------------------------
           
           fluidRow(
             bs4Dash::bs4Card(
               width = 12,
-              inputId = "distribution_card",
-              title = "Distribution Plots",
+              inputId = "florence_plots_card",
+              title = "Florence Nightingale Plots",
               status = "info",
               solidHeader = FALSE,
               collapsible = TRUE,
-              collapsed = TRUE,
+              collapsed = FALSE,
               closable = FALSE,
-              plotly::plotlyOutput("distribution_plots")
+              plotOutput("florence_plots")
             ) # here
           )
         )
@@ -192,8 +192,8 @@ shiny::shinyApp(
         rename_at(vars(ends_with("_2")), ~ paste0(., "_MR1000")) %>%
         rename_at(vars(ends_with("_MR1000")), ~ stringr::str_remove(., "_2")) %>%
         mutate_at(vars(average_size_of_army:all_other_causes_MR1000), as.numeric) %>%
-        mutate(month = stringr::str_replace(month, "_", " "),
-               month = stringr::str_trim(month))
+        mutate(month = stringr::str_replace(month, "_", " ")) %>%
+        separate(month, into = c("month", "year"), sep = " ")
         
       DT::datatable(
         data,
@@ -206,29 +206,16 @@ shiny::shinyApp(
         )
       )
       
-      # save(data, "proc_data.RData")
+      # save(data, file = "data/proc_data.RData")
       
     })
     
-    ## VIZ - DISTRIBUTION ----------------------------------------------------------------------
+    ## VIZ - FLORENCE PLOTS ----------------------------------------------------------------------
     
-    output$distribution_plots <- plotly::renderPlotly({
+    output$florence_plots <- renderPlot({
       
-      load("data/proc_data.RData")
-      
-      data <- data %>%
-        select_if(is.numeric) %>%
-        stack()
-      
-      plotly::ggplotly(
-        ggplot(data, aes(x = values, color = ind)) +
-          geom_line(stat = "density") +
-          theme_bw() +
-          xlab("") +
-          ylab("Density") +
-          facet_wrap(~ ind, scales = "free") +
-          theme(legend.position = "none")
-      )
+      source("florence_plots.R")
+      p
     })
     
   }
