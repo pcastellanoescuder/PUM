@@ -1,5 +1,6 @@
 library(shiny)
 library(bs4Dash)
+library(tidyverse)
 
 shiny::shinyApp(
   ui = bs4DashPage(
