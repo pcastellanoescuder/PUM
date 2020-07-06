@@ -46,17 +46,6 @@ cxc2 + coord_polar(start=3*pi/2) +
   ggtitle("Causes of Mortality in the Army in the East") + 
   xlab("")
 
-## Not run: 
-# do both together, with faceting
-cxc <- ggplot(Night, aes(x = factor(Date), y=Deaths, fill = Cause)) +
-  geom_bar(width = 1, position="identity", stat="identity", color="black") + 
-  scale_y_sqrt() +
-  facet_grid(. ~ Regime, scales="free", labeller=label_both)
-cxc + coord_polar(start=3*pi/2) +
-  ggtitle("Causes of Mortality in the Army in the East") + 
-  xlab("")
-
-## End(Not run)
 
 ## What if she had made a set of line graphs?
 
