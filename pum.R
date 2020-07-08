@@ -7,6 +7,7 @@ library(janitor)
 library(HistData)
 library(reshape2)
 library(ggtext)
+library(lubridate)
 
 shiny::shinyApp(
   ui = bs4DashPage(

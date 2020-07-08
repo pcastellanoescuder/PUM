@@ -1,4 +1,6 @@
 
+data("Nightingale")
+
 Nighting_df <- Nightingale %>%
   filter(Date <= '1855-03-01') %>% 
   mutate(Label = case_when(
