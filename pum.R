@@ -1,6 +1,12 @@
 library(shiny)
 library(bs4Dash)
 library(tidyverse)
+library(readxl)
+library(DT)
+library(janitor)
+library(HistData)
+library(reshape2)
+library(ggtext)
 
 shiny::shinyApp(
   ui = bs4DashPage(

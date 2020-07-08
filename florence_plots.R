@@ -1,9 +1,4 @@
 
-library(HistData)
-library(tidyverse)
-library(reshape2)
-library(ggtext)
-
 Nighting_df <- Nightingale %>%
   filter(Date <= '1855-03-01') %>% 
   mutate(Label = case_when(
