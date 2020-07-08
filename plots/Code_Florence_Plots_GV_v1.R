@@ -11,7 +11,7 @@ library(dygraphs)
 library(xts)          # To make the convertion data-frame / xts format
 library(tidyverse)
 library(lubridate)
-install.packages("babynames")
+# install.packages("babynames")
 library(babynames)
 library(viridis)
 library(hrbrthemes)

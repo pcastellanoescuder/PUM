@@ -8,6 +8,7 @@ library(HistData)
 library(reshape2)
 library(ggtext)
 library(lubridate)
+library(plotly)
 
 shiny::shinyApp(
   ui = bs4DashPage(
