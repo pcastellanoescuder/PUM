@@ -66,6 +66,11 @@ shiny::shinyApp(
           "About Us",
           tabName = "about",
           icon = "id-card"
+        ),
+        bs4SidebarMenuItem(
+          "R-Ladies Contest",
+          tabName = "contest",
+          icon = "thumbs-up"
         )
       )
     ),
@@ -150,6 +155,17 @@ shiny::shinyApp(
           fluidRow(
             bs4Dash::bs4Card(
               width = 12,
+              inputId = "datainfo_card",
+              title = "Data Information",
+              status = "info",
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = TRUE,
+              closable = FALSE,
+              includeMarkdown("mds/dataset.md")
+            ),
+            bs4Dash::bs4Card(
+              width = 12,
               inputId = "data_card",
               title = "Florence Nightingale Data",
               status = "info",
@@ -182,6 +198,74 @@ shiny::shinyApp(
               plotOutput("florence_plots")
             ) # here
           )
+        ),
+        
+        ## ABOUT ----------------------------------------------------------------------
+        
+        bs4TabItem(
+          tabName = "about",
+          fluidRow(
+            column(width = 6,
+                   bs4Dash::bs4Card(
+                     width = 12,
+                     inputId = "marta_card",
+                     title = "Marta Bofill Roig",
+                     status = "info",
+                     solidHeader = FALSE,
+                     collapsible = TRUE,
+                     collapsed = TRUE,
+                     closable = FALSE,
+                     includeMarkdown("mds/marta.md")
+                   ),
+                   bs4Dash::bs4Card(
+                     width = 12,
+                     inputId = "pol_card",
+                     title = "Pol Castellano Escuder",
+                     status = "danger",
+                     solidHeader = FALSE,
+                     collapsible = TRUE,
+                     collapsed = TRUE,
+                     closable = FALSE,
+                     includeMarkdown("mds/pol.md")
+                   )
+            ),
+            
+            column(width = 6,
+                   bs4Dash::bs4Card(
+                     width = 12,
+                     inputId = "guille_card",
+                     title = "Guillermo Villacampa Javierre",
+                     status = "success",
+                     solidHeader = FALSE,
+                     collapsible = TRUE,
+                     collapsed = TRUE,
+                     closable = FALSE,
+                     includeMarkdown("mds/guille.md")
+                   )
+            )
+          ),
+          fluidRow(
+            includeMarkdown("mds/pum_picture.md")
+          )
+        ),
+        
+        ## CONTEST ---------------------------------------------------------
+        
+        bs4TabItem(
+          tabName = "contest",
+          fluidRow(
+            bs4Dash::bs4Card(
+              width = 12,
+              inputId = "contest_card",
+              title = "R-Ladies!",
+              status = "info",
+              solidHeader = FALSE,
+              collapsible = FALSE,
+              collapsed = FALSE,
+              closable = FALSE,
+              includeMarkdown("mds/contest.md")
+            )
+          )
         )
         
       ) # bs4TabItems
@@ -194,18 +278,22 @@ shiny::shinyApp(
     
     output$florence_data <- DT::renderDataTable({
       
-      data <- readxl::read_xlsx("data/datos_florence.xlsx") %>%
-        janitor::row_to_names(row_number = 1) %>%
-        janitor::clean_names() %>%
-        rename_at(vars(zymotic_diseases:all_other_causes), ~ paste0(., "_deaths")) %>%
-        rename_at(vars(ends_with("_2")), ~ paste0(., "_MR1000")) %>%
-        rename_at(vars(ends_with("_MR1000")), ~ stringr::str_remove(., "_2")) %>%
-        mutate_at(vars(average_size_of_army:all_other_causes_MR1000), as.numeric) %>%
-        mutate(month = stringr::str_replace(month, "_", " ")) %>%
-        separate(month, into = c("month", "year"), sep = " ")
-        
+      observe_helpers(help_dir = "mds")
+      
+      # data <- readxl::read_xlsx("data/datos_florence.xlsx") %>%
+      #   janitor::row_to_names(row_number = 1) %>%
+      #   janitor::clean_names() %>%
+      #   rename_at(vars(zymotic_diseases:all_other_causes), ~ paste0(., "_deaths")) %>%
+      #   rename_at(vars(ends_with("_2")), ~ paste0(., "_MR1000")) %>%
+      #   rename_at(vars(ends_with("_MR1000")), ~ stringr::str_remove(., "_2")) %>%
+      #   mutate_at(vars(average_size_of_army:all_other_causes_MR1000), as.numeric) %>%
+      #   mutate(month = stringr::str_replace(month, "_", " ")) %>%
+      #   separate(month, into = c("month", "year"), sep = " ")
+      
+      data("Nightingale")
+      
       DT::datatable(
-        data,
+        Nightingale,
         class = 'cell-border stripe',
         rownames = FALSE, 
         filter = 'top',
