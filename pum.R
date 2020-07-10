@@ -8,7 +8,7 @@ library(HistData)
 library(reshape2)
 library(ggtext)
 library(lubridate)
-library(plotly)
+library(shinyWidgets)
 
 shiny::shinyApp(
   ui = bs4DashPage(
@@ -193,9 +193,21 @@ shiny::shinyApp(
               status = "info",
               solidHeader = FALSE,
               collapsible = TRUE,
-              collapsed = FALSE,
+              collapsed = TRUE,
               closable = FALSE,
               plotOutput("florence_plots")
+            ),
+            bs4Dash::bs4Card(
+              width = 12,
+              inputId = "cum_plots_card",
+              title = "Cumulative Causes of Deaths",
+              status = "danger",
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = TRUE,
+              closable = FALSE,
+              prettySwitch("val", "Number of deaths", fill = TRUE, status = "danger"),
+              plotOutput("cum_plots")
             ) # here
           )
         ),
@@ -278,8 +290,6 @@ shiny::shinyApp(
     
     output$florence_data <- DT::renderDataTable({
       
-      observe_helpers(help_dir = "mds")
-      
       # data <- readxl::read_xlsx("data/datos_florence.xlsx") %>%
       #   janitor::row_to_names(row_number = 1) %>%
       #   janitor::clean_names() %>%
@@ -313,6 +323,40 @@ shiny::shinyApp(
       
       source("florence_plots.R")
       p
+    })
+    
+    ## VIZ - CUMULATIVE PLOTS ----------------------------------------------------------------------
+    
+    output$cum_plots <- renderPlot({
+
+      aux <- tibble(month_dates = rep(Nightingale$Month, 3)) %>%
+        mutate(type = as.factor(c(rep("Wounds", nrow(Nightingale)),
+                                  rep("Zymotic", nrow(Nightingale)),
+                                  rep("Other causes", nrow(Nightingale)))))
+      
+      if (input$val){
+        aux <- aux %>%
+          mutate(n = c(Nightingale$Wounds,
+                       Nightingale$Disease,
+                       Nightingale$Other))
+        ylab_name <- "Cumulative number of deaths"
+        
+        } else {
+          aux <- aux %>%
+            mutate(n = c(Nightingale$Wounds.rate,
+                         Nightingale$Disease.rate,
+                         Nightingale$Other.rate))
+        ylab_name <- "Cumulative mortality rate per 1000"  
+      }
+      
+      ggplot(aux, aes(x = month_dates, y = n, fill = type)) +
+        geom_col() +
+        ylab(ylab_name) +
+        xlab("") +
+        theme_bw() +
+        theme(legend.position = "none",
+              axis.text.x = element_text(angle = 45, hjust = 1))
+
     })
     
   }

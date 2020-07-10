@@ -1,1 +1,2 @@
-   
+
+My name is Pol Castellano Escuder and I'm doing a PhD in Bioinformatics at the University of Barcelona. My research is mainly focused on metabolomics and proteomics. https://pcastellanoescuder.github.io/               
