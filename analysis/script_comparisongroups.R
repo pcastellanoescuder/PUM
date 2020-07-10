@@ -1,6 +1,6 @@
 #############################################
 
-#PUM - Analisis pre-/post-sanitary measures
+# pum! - Analisis pre-/post-sanitary measures
 
 #############################################
 
@@ -26,3 +26,6 @@ diffg_or <- function(phat_group1,phat_group0,samplesize0,samplesize1){
   test <- log((phat_group1/(1-phat_group1))/(phat_group0/(1-phat_group0)))*((1/(phat_group0*(1-phat_group0)/samplesize0)+ 1/(phat_group1*(1-phat_group1)/samplesize1)))^(-1/2)
   return(test)
 }
+
+
+
