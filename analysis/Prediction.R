@@ -1,4 +1,3 @@
-
 ### Florence prediction code
 
 setwd("~/Copia13.01.20/Concursos/Florence Nightgale/bbdd")
@@ -11,24 +10,24 @@ data$period <- 1:nrow(data)
 ## In this section the shiny app provides an interactive section for dinamyc prediction of the mortality rate of a specific month using previous
 ## information. As statistician at 1850, would you be able to provide an accurate prediction of the future mortality rate? 
 
-## 0) radioButton per selecionar el método de predicció. De moment tenim "Linear prediction", "Exponential smoothing".
+## 0) radioButton per selecionar el mÃ©todo de predicciÃ³. De moment tenim "Linear prediction", "Exponential smoothing".
 
 #######################
 ## 1) Linear prediction
 #######################
 
-# Exaplicació: Linear regression to predict the next mortality rate taking into consideration the x last observed mortality rates
+# ExaplicaciÃ³: Linear regression to predict the next mortality rate taking into consideration the x last observed mortality rates
 
-## Quines entrades necessita aquesta predicció:
-# 1) Boto que et pregunti si vols fer la predicció abans de que s'implantesis les mesures de sanitat o després: 
+## Quines entrades necessita aquesta predicciÃ³:
+# 1) Boto que et pregunti si vols fer la predicciÃ³ abans de que s'implantesis les mesures de sanitat o desprÃ©s: 
 #     "Prediction before health measures or prediction after health measures"
-# 2) Un sliderInput que et permeti seleccionar a quina data vols fer la predicció. Les opcions de la sliderInput han d'estar condicionats 
-# a si es vol fer a predició pre o post mesures. Si és pre, les opcions que han de sortir és del Juny del 54 al febrer del 55. Si es post,
-# ha de ser del May del 55 al Març 56.
+# 2) Un sliderInput que et permeti seleccionar a quina data vols fer la predicciÃ³. Les opcions de la sliderInput han d'estar condicionats 
+# a si es vol fer a prediciÃ³ pre o post mesures. Si Ã©s pre, les opcions que han de sortir Ã©s del Juny del 54 al febrer del 55. Si es post,
+# ha de ser del May del 55 al MarÃ§ 56.
 ## 3) numericInput, "how many previous months do you want to use for prediction"?
 
-enter1 <- "Dec 1854"  # Aquí s'indica el mes on es vol fer la predicció
-enter2 <- 7 # Quants mesos previs volen considerar per fer la predicció?
+enter1 <- "Dec 1854"  # AquÃ­ s'indica el mes on es vol fer la predicciÃ³
+enter2 <- 7 # Quants mesos previs volen considerar per fer la predicciÃ³?
 
 time_pred <- which(data$month==enter1 )
 start <- which(data$month==enter1 ) - enter2
@@ -56,12 +55,12 @@ library(tidyverse)
 # install.packages("fpp2")
 library(fpp2) 
 
-# Explicació: Exponential smoothing to predict the next mortality rate taking into consideration the x last observed mortality rates (R function hold)
+# ExplicaciÃ³: Exponential smoothing to predict the next mortality rate taking into consideration the x last observed mortality rates (R function hold)
 
-## Aquesta predicció ha de tenir els mateixos elemnents d'entrada que l'anterior.
+## Aquesta predicciÃ³ ha de tenir els mateixos elemnents d'entrada que l'anterior.
 
-enter1 <- "Jan 1855"  # Aquí s'indica el mes on es vol fer la predicció
-enter2 <- 7 # Quants mesos previs volen considerar per fer la predicció?
+enter1 <- "Jan 1855"  # AquÃ­ s'indica el mes on es vol fer la predicciÃ³
+enter2 <- 7 # Quants mesos previs volen considerar per fer la predicciÃ³?
 
 time_pred <- which(data$month==enter1 )
 start <- which(data$month==enter1 ) - enter2
