@@ -1,8 +1,6 @@
 
-setwd("~/Copia13.01.20/Concursos/Florence Nightgale/bbdd")
-load("proc_data.rdata")
-names(data)
-data$Month_date <-as.Date(as.yearmon(data$month))
+load("data/proc_data.RData")
+data$Month_date <- as.Date(as.yearmon(data$month))
 data$total_deaths <- data$zymotic_diseases_deaths +data$wounds_injuries_deaths + data$all_other_causes_deaths
 
 # Library
@@ -10,7 +8,7 @@ library(dygraphs)
 library(xts)          # To make the convertion data-frame / xts format
 library(tidyverse)
 library(lubridate)
-install.packages("babynames")
+# install.packages("babynames")
 library(babynames)
 library(viridis)
 library(hrbrthemes)
@@ -57,14 +55,15 @@ ggplotly(p, tooltip="text")
 ### 2)  Evolution of army size and total number of deaths (Interactive time series plot)
 # Interactive plot to visualize the temporal evolution of the British army size and the total number of deaths per month
 
-dd <- subset(data, select=c("average_size_of_army","total_deaths","Month_date"))
+dd <- subset(data, select=c("average_size_of_army","total_deaths","month_date"))
 don <- xts(x = dd, order.by = dd$Month_date)
 p_overall <- dygraph(don) %>%
   dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = F, colors=RColorBrewer::brewer.pal(3, "Set2")) %>%
   dyRangeSelector() %>%
   dyCrosshair(direction = "vertical") %>%
   dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = F)  %>%
-  dyRoller(rollPeriod = 1);p_overall
+  dyRoller(rollPeriod = 1)
+p_overall
 
 
 ############################################################################################################################
@@ -82,7 +81,7 @@ data_corr  <- subset(data, select=c("zymotic_diseases_MR1000", "wounds_injuries_
 }
 
 library(corrplot)
-M <- cor(as.matrix(data_corr ))
+M <- cor(as.matrix(aux ))
 corrplot.mixed(M,size=0.5,tl.cex=0.8)
 
 cor.test(data$zymotic_diseases_MR1000, data$wounds_injuries_MR1000)
@@ -103,7 +102,8 @@ if (val== "yes"){
 }
 
 library(GGally)
-ggpairs(data_corr, title="correlogram with ggpairs()") 
+ggpairs(data_corr) +
+  theme_bw()
 
 ############################################################################################################################
 

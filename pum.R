@@ -1,14 +1,5 @@
-library(shiny)
-library(bs4Dash)
-library(tidyverse)
-library(readxl)
-library(DT)
-library(janitor)
-library(HistData)
-library(reshape2)
-library(ggtext)
-library(lubridate)
-library(shinyWidgets)
+
+source("helpers.R")
 
 shiny::shinyApp(
   ui = bs4DashPage(
@@ -17,7 +8,7 @@ shiny::shinyApp(
     sidebar_collapsed = FALSE,
     controlbar_collapsed = TRUE,
     controlbar_overlay = TRUE,
-    title = "PUM",
+    title = "pum!",
     
     ## NAVBAR ----------------------------------------------------------------------
     
@@ -35,7 +26,7 @@ shiny::shinyApp(
     sidebar = bs4DashSidebar(
       skin = "dark",
       status = "warning",
-      title = "PUM",
+      title = "pum!",
       brandColor = "warning",
       url = "https://github.com/pcastellanoescuder/PUM",
       src = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Florence_Nightingale_%28H_Hering_NPG_x82368%29.jpg/1024px-Florence_Nightingale_%28H_Hering_NPG_x82368%29.jpg",
@@ -58,9 +49,14 @@ shiny::shinyApp(
           icon = "chart-bar"
         ),
         bs4SidebarMenuItem(
-          "Analysis",
-          tabName = "analysis",
-          icon = "sliders"
+          "Inference",
+          tabName = "inference",
+          icon = "not-equal"
+        ),
+        bs4SidebarMenuItem(
+          "Prediction",
+          tabName = "prediction",
+          icon = "chart-line"
         ),
         bs4SidebarMenuItem(
           "About Us",
@@ -183,9 +179,10 @@ shiny::shinyApp(
         bs4TabItem(
           tabName = "viz",
           
-          ## FLORENCE PLOTS -----------------------------------------------------
-          
           fluidRow(
+            
+            ## FLORENCE PLOTS -----------------------------------------------------
+            
             bs4Dash::bs4Card(
               width = 12,
               inputId = "florence_plots_card",
@@ -197,10 +194,13 @@ shiny::shinyApp(
               closable = FALSE,
               plotOutput("florence_plots")
             ),
+            
+            ## CUMULATIVE PLOTS -----------------------------------------------------
+            
             bs4Dash::bs4Card(
               width = 12,
               inputId = "cum_plots_card",
-              title = "Cumulative Causes of Deaths",
+              title = "Cumulative Causes of Death",
               status = "danger",
               solidHeader = FALSE,
               collapsible = TRUE,
@@ -208,6 +208,36 @@ shiny::shinyApp(
               closable = FALSE,
               prettySwitch("val", "Number of deaths", fill = TRUE, status = "danger"),
               plotOutput("cum_plots")
+            ),
+            
+            ## CORRELATION PLOTS -----------------------------------------------------
+            
+            bs4Dash::bs4Card(
+              width = 12,
+              inputId = "cor_plots_card",
+              title = "Correlations",
+              status = "warning",
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = TRUE,
+              closable = FALSE,
+              prettySwitch("val2", "Number of deaths", fill = TRUE, status = "warning"),
+              plotOutput("cor_plot")
+            ),
+            
+            ## BARPLOTS -----------------------------------------------------
+            
+            bs4Dash::bs4Card(
+              width = 12,
+              inputId = "bar_plots_card",
+              title = "Barplots",
+              status = "success",
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = TRUE,
+              closable = FALSE,
+              prettySwitch("val3", "Number of deaths", fill = TRUE, status = "success"),
+              plotOutput("bar_plot")
             ) # here
           )
         ),
@@ -328,34 +358,82 @@ shiny::shinyApp(
     ## VIZ - CUMULATIVE PLOTS ----------------------------------------------------------------------
     
     output$cum_plots <- renderPlot({
-
-      aux <- tibble(month_dates = rep(Nightingale$Month, 3)) %>%
-        mutate(type = as.factor(c(rep("Wounds", nrow(Nightingale)),
-                                  rep("Zymotic", nrow(Nightingale)),
-                                  rep("Other causes", nrow(Nightingale)))))
       
       if (input$val){
-        aux <- aux %>%
-          mutate(n = c(Nightingale$Wounds,
-                       Nightingale$Disease,
-                       Nightingale$Other))
+        aux <- Nightingale %>%
+          select(Date, Month, Year, Wounds, Disease, Other)
         ylab_name <- "Cumulative number of deaths"
         
         } else {
-          aux <- aux %>%
-            mutate(n = c(Nightingale$Wounds.rate,
-                         Nightingale$Disease.rate,
-                         Nightingale$Other.rate))
+          aux <- Nightingale %>%
+            select(Date, Month, Year, Wounds.rate, Disease.rate, Other.rate)
         ylab_name <- "Cumulative mortality rate per 1000"  
       }
       
-      ggplot(aux, aes(x = month_dates, y = n, fill = type)) +
-        geom_col() +
+      aux <- aux %>%
+        pivot_longer(cols = -c(Date, Month, Year)) %>%
+        mutate(date = paste0(Month, " ", Year))
+      
+      ggplot(aux, aes(x = Date, y = value, fill = name)) +
+        geom_area() +
         ylab(ylab_name) +
         xlab("") +
         theme_bw() +
-        theme(legend.position = "none",
-              axis.text.x = element_text(angle = 45, hjust = 1))
+        theme(legend.position = "bottom",
+              legend.title = element_blank(),
+              axis.text.x = element_text(angle = 45, hjust = 1)) +
+        scale_fill_viridis(discrete = TRUE)
+
+    })
+    
+    ## VIZ - CORRELATION PLOTS ----------------------------------------------------------------------
+    
+    output$cor_plot <- renderPlot({
+      
+      if (input$val2){
+        aux <- Nightingale %>%
+          select(Wounds, Disease, Other)
+        
+      } else {
+        aux <- Nightingale %>%
+          select(Wounds.rate, Disease.rate, Other.rate)
+      }
+
+      ggpairs(aux) +
+        theme_bw()
+
+    })
+    
+    ## VIZ - BARPLOTS ----------------------------------------------------------------------
+    
+    output$bar_plot <- renderPlot({
+      
+      if (input$val3){
+        aux <- Nightingale %>%
+          mutate(date = paste0(Month, " ", Year)) %>%
+          select(Date, date, Wounds, Disease, Other)
+        ylab_name <- "Number of deaths"
+        
+      } else {
+        aux <- Nightingale %>%
+          mutate(date = paste0(Month, " ", Year)) %>%
+          select(Date, date, Wounds.rate, Disease.rate, Other.rate) 
+        ylab_name <- "Mortality rate per 1000"  
+      }
+      
+      aux <- aux %>%
+        pivot_longer(cols = -c(Date, date)) %>%
+        arrange(sort(date))
+      
+      ggplot(aux, aes(reorder(date, Date), value, fill = name)) +
+        geom_col() +
+        theme_bw() +
+        xlab("") +
+        ylab(ylab_name) +
+        theme(legend.position = "bottom",
+              legend.title = element_blank(),
+              axis.text.x = element_text(angle = 45, hjust = 1)) +
+        scale_fill_viridis(discrete = TRUE)
 
     })
     

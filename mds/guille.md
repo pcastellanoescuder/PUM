@@ -1,0 +1,2 @@
+
+My name is Guillermo Villacampa. I am a statistician and sociologist. I have been working in the field of biomedical research for the last 4 years. Nowadays I’m working at Vall d'Hebron Institute of Oncology (VHIO) and SOLTI group. My topics of interest are clinical trial designs, survival analysis and prediction modeling strategies.
