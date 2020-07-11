@@ -181,6 +181,20 @@ shiny::shinyApp(
           
           fluidRow(
             
+            ## PLOT DESCRIPTION
+            
+            bs4Dash::bs4Card(
+              width = 12,
+              inputId = "description_plots_card",
+              title = "Description of Plots",
+              status = "light",
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = FALSE,
+              closable = FALSE,
+              includeMarkdown("mds/viz.md")
+            ),
+            
             ## FLORENCE PLOTS -----------------------------------------------------
             
             bs4Dash::bs4Card(
