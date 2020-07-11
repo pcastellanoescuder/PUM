@@ -1,4 +1,4 @@
-# PUM
+# Welcome to **pum!** Repository <img src='logos/logo.png' align="right" height="139"/>
 
 This repository contains the code we used for the "Nightingale Contest Spain" created by [@RLadiesBIO](https://twitter.com/RLadiesBIO) (https://github.com/rladies/spain_nightingale/).
 
