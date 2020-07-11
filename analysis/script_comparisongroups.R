@@ -5,29 +5,29 @@
 #############################################
 
 
-# Table estimated probabilities of death by year
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/PUM/data/proc_data.RData")
 
-prob_year = death_year/samplesize1
+# Table estimated probabilities of death by year
+# prob_year = death_year/samplesize1
+
+data$prob_zymotic_death = data$zymotic_diseases_deaths/data$average_size_of_army
+data$prob_injuries_death = data$wounds_injuries_deaths/data$average_size_of_army
+data$prob_other_death = data$all_other_causes_deaths/data$average_size_of_army
 
 
 # inputs: 
 # i) comparison based on diff probabilities, risk ratio, odds ratio
-# ii) rates in each group (e.g., death rates before sanitary measures at april 54 bs death rates before sanitary measures at april 55)
+# ii) probabilities in each group (e.g., death rates before sanitary measures at april 54 bs death rates before sanitary measures at april 55) <-check dates
 # iii) army sizes in each group
-# iv) cause
-
-# test diff p
-
-# deaths_group1, deaths_group2
-# return: probabilities, risk diff, test, frase conclusions
+# iv) cause of death
 
 alpha=0.025 
 z.alpha <- qnorm(1-alpha,0,1)   
 
 diffg_p <- function(phat_group1,phat_group0,samplesize0,samplesize1){
   
-  phat_group1 = death_year1/samplesize1
-  phat_group0 = death_year0/samplesize0
+  # phat_group1 = death_year1/samplesize1
+  # phat_group0 = death_year0/samplesize0
   
   riskdiff = phat_group1-phat_group0
   
@@ -41,8 +41,8 @@ diffg_p <- function(phat_group1,phat_group0,samplesize0,samplesize1){
 # test risk ratio
 diffg_rr <- function(phat_group1,phat_group0,samplesize0,samplesize1){
   
-  phat_group1 = death_year1/samplesize1
-  phat_group0 = death_year0/samplesize0
+  # phat_group1 = death_year1/samplesize1
+  # phat_group0 = death_year0/samplesize0
   
   riskratio = phat_group1/phat_group0
   
@@ -56,8 +56,8 @@ diffg_rr <- function(phat_group1,phat_group0,samplesize0,samplesize1){
 # test odds ratio
 diffg_or <- function(phat_group1,phat_group0,samplesize0,samplesize1){
   
-  phat_group1 = death_year1/samplesize1
-  phat_group0 = death_year0/samplesize0
+  # phat_group1 = death_year1/samplesize1
+  # phat_group0 = death_year0/samplesize0
   
   oddsratio = (phat_group1/(1-phat_group1))/(phat_group0/(1-phat_group0))
   
