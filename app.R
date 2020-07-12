@@ -283,16 +283,14 @@ shiny::shinyApp(
               collapsible = TRUE,
               collapsed = TRUE,
               closable = FALSE,
-              selectizeInput("pre1", "Month 1:", 
+              selectizeInput("pre1", "Month in the period pre-healthy measures:", 
                              choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
-                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
+                                         "Jan 1855", "Feb 1855"),
+                             selected = "Apr 1854"),
+              selectizeInput("post1", "Month in the period post-healthy measures:", 
+                             choices = c("Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
                                          "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
-                             selected = "Feb 1855"),
-              selectizeInput("post1", "Month 2:", 
-                             choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
-                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
-                                         "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
-                             selected = "Jan 1856"),
+                             selected = "Mar 1856"),
               numericInput("alpha1", "alpha", value = 0.025),
               selectizeInput("feat_inf1", "Feature to test", choices = c("Disease", "Wounds", "Other"), selected = "Disease"),
               DT::dataTableOutput("prop")
@@ -307,16 +305,14 @@ shiny::shinyApp(
               collapsible = TRUE,
               collapsed = TRUE,
               closable = FALSE,
-              selectizeInput("pre2", "Month 1:", 
+              selectizeInput("pre2", "Month in the period pre-healthy measures:", 
                              choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
-                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
+                                         "Jan 1855", "Feb 1855"),
+                             selected = "Apr 1854"),
+              selectizeInput("post2", "Month in the period post-healthy measures:", 
+                             choices = c("Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
                                          "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
-                             selected = "Feb 1855"),
-              selectizeInput("post2", "Month 2:", 
-                             choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
-                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
-                                         "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
-                             selected = "Jan 1856"),
+                             selected = "Mar 1856"),
               numericInput("alpha2", "alpha", value = 0.025),
               selectizeInput("feat_inf2", "Feature to test", choices = c("Disease", "Wounds", "Other"), selected = "Disease"),
               DT::dataTableOutput("risk")
@@ -331,16 +327,14 @@ shiny::shinyApp(
               collapsible = TRUE,
               collapsed = TRUE,
               closable = FALSE,
-              selectizeInput("pre3", "Month 1:", 
+              selectizeInput("pre3", "Month in the period pre-healthy measures:", 
                              choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
-                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
+                                         "Jan 1855", "Feb 1855"),
+                             selected = "Apr 1854"),
+              selectizeInput("post3", "Month in the period post-healthy measures:", 
+                             choices = c("Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
                                          "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
-                             selected = "Feb 1855"),
-              selectizeInput("post3", "Month 2:", 
-                             choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
-                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
-                                         "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
-                             selected = "Jan 1856"),
+                             selected = "Mar 1856"),
               numericInput("alpha3", "alpha", value = 0.025),
               selectizeInput("feat_inf3", "Feature to test", choices = c("Disease", "Wounds", "Other"), selected = "Disease"),
               DT::dataTableOutput("odds")
@@ -557,11 +551,11 @@ shiny::shinyApp(
       
       if (input$val2){
         aux <- Nightingale %>%
-          select(Wounds, Disease, Other)
+          select(Army, Wounds, Disease, Other)
         
       } else {
         aux <- Nightingale %>%
-          select(Wounds.rate, Disease.rate, Other.rate)
+          select(Army, Wounds.rate, Disease.rate, Other.rate)
       }
 
       ggpairs(aux) +
@@ -633,7 +627,7 @@ shiny::shinyApp(
       res <- diffg_p(phat_group1 = phat_group1, phat_group0 = phat_group0, 
                      samplesize0 = samplesize0, samplesize1 = samplesize1, alpha = alpha)
       
-      res_table <- data.frame(Prob0 = round(res$prob0, 3), Prob1 = round(res$prob1, 3), 
+      res_table <- data.frame(Prob_pre = round(res$prob0, 3), Prob_post = round(res$prob1, 3), 
                               RiskDifference = round(res$difference, 3), test = round(res$test, 3), Reject_H0 = res$reject)
       
       DT::datatable(
@@ -671,7 +665,7 @@ shiny::shinyApp(
       res <- diffg_rr(phat_group1 = phat_group1, phat_group0 = phat_group0, 
                       samplesize0 = samplesize0, samplesize1 = samplesize1, alpha = alpha)
       
-      res_table <- data.frame(Prob0 = round(res$prob0, 3), Prob1 = round(res$prob1, 3), 
+      res_table <- data.frame(Prob_pre = round(res$prob0, 3), Prob_post = round(res$prob1, 3), 
                               RiskRatio = round(res$riskratio, 3), test = round(res$test, 3), Reject_H0 = res$reject)
 
       DT::datatable(
@@ -709,7 +703,7 @@ shiny::shinyApp(
       res <- diffg_or(phat_group1 = phat_group1, phat_group0 = phat_group0, 
                       samplesize0 = samplesize0, samplesize1 = samplesize1, alpha = alpha)
       
-      res_table <- data.frame(Prob0 = round(res$prob0, 3), Prob1 = round(res$prob1, 3), 
+      res_table <- data.frame(Prob_pre = round(res$prob0, 3), Prob_post = round(res$prob1, 3), 
                               OddsRatio = round(res$oddsratio, 3), test = round(res$test, 3), Reject_H0 = res$reject)
       
       DT::datatable(
