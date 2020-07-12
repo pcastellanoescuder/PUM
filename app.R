@@ -679,7 +679,9 @@ shiny::shinyApp(
       new <- data.frame(x = time_pred)
       pred_linear <- predict(mod, new, interval = "prediction") %>%
         as.data.frame() %>%
-        mutate(date = enter1)
+        mutate(date = enter1,
+               fit = ifelse(fit < 0, 0, fit),
+               lwr = ifelse(lwr < 0, 0, lwr))
       
       data_pred <- data_pred[start:(time_pred) ,]
       
@@ -730,7 +732,9 @@ shiny::shinyApp(
       holt_res2 <- tibble(pred = holt_res$mean[1]) %>%
         mutate(date = enter1,
                upr = holt_res$upper[2],
-               lwr = holt_res$lower[2])
+               lwr = holt_res$lower[2],
+               pred = ifelse(pred < 0, 0, pred),
+               lwr = ifelse(lwr < 0, 0, lwr))
       
       p <- ggplot(data_pred) +
         geom_point(aes(x = reorder(date, Date), y = my_var), size = 3) +
