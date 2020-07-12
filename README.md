@@ -6,6 +6,10 @@ Repository managed by Marta Bofill ([@martabofillr](https://twitter.com/martabof
 
 ## Run Local
 
+1) Clone this repository on your computer.
+2) Make sure that you have all packages included in `helpers.R` installed on your machine.
+3) Run `app.R` file and enjoy **pum!**.
+
 ## shinyapps.io Version
 
 Please visit http://polcastellano.shinyapps.io/PUM to see a PUM's running version.   
