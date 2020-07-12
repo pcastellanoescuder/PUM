@@ -318,7 +318,27 @@ shiny::shinyApp(
                              selected = "Mar 1856"),
               numericInput("start", "Number of months to build the model", value = 10),
               selectizeInput("to_pred", "Feature to predict", choices = c("Disease.rate", "Wounds.rate", "Other.rate"), selected = "Disease.rate"),
+              prettySwitch("showci", "Show CI", fill = TRUE, status = "info"),
               plotlyOutput("pred_plot")
+            ),
+            bs4Dash::bs4Card(
+              width = 12,
+              inputId = "pred2_card",
+              title = "Exponential Smoothing Forecast",
+              status = "danger",
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = TRUE,
+              closable = FALSE,
+              selectizeInput("end2", "Month to Predict", 
+                             choices = c("May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
+                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
+                                         "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
+                             selected = "Mar 1856"),
+              numericInput("start2", "Number of months to build the model", value = 10),
+              selectizeInput("to_pred2", "Feature to predict", choices = c("Disease.rate", "Wounds.rate", "Other.rate"), selected = "Disease.rate"),
+              prettySwitch("showci2", "Show CI", fill = TRUE, status = "danger"),
+              plotlyOutput("pred_plot2")
             )
           )
         ),
@@ -520,6 +540,8 @@ shiny::shinyApp(
     
     ## PREDICTION -------------------------------------------------------------
     
+    ## LINEAR MODEL ----------------------------------------------------------
+    
     output$pred_plot <- renderPlotly({
       
       data_pred <- Nightingale %>%
@@ -553,10 +575,57 @@ shiny::shinyApp(
       p <- ggplot(data_pred) +
         geom_point(aes(x = reorder(date, Date), y = my_var), size = 3) +
         geom_point(data = pred_linear, aes(date, fit), size = 3, color = "red") +
+        {if(input$showci)geom_errorbar(data = pred_linear, aes(x = date, y = fit, ymin = upr, ymax = lwr), width = 0.1, color = "red")} +
         xlab("") +
         ylab("Mortality Rate") +
         theme_bw() +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1));p
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
+      
+      ggplotly(p)
+      
+    })
+    
+    ## EXPONENTIAL SMOOTHING -------------------------------------------------
+    
+    output$pred_plot2 <- renderPlotly({
+      
+      data_pred <- Nightingale %>%
+        mutate(date = paste0(Month, " ", Year)) %>%
+        rownames_to_column("period")
+      
+      enter1 <- input$end2
+      enter2 <- input$start2
+      to_pred <- input$to_pred2
+      
+      time_pred <- which(data_pred$date == enter1)
+      start <- which(data_pred$date == enter1) - enter2
+      
+      x <- as.numeric(data_pred$period[start:(time_pred-1)])
+      y <- data_pred[start:(time_pred-1),]
+      y <- y %>%
+        select_at(vars(matches(to_pred))) %>%
+        pull()
+      
+      holt_res <- holt(y, h = 1)
+      
+      data_pred <- data_pred[start:(time_pred) ,]
+      
+      data_pred <- data_pred %>%
+        rename_at(vars(matches(to_pred)), ~ "my_var")
+      
+      holt_res2 <- tibble(pred = holt_res$mean[1]) %>%
+        mutate(date = enter1,
+               upr = holt_res$upper[2],
+               lwr = holt_res$lower[2])
+      
+      p <- ggplot(data_pred) +
+        geom_point(aes(x = reorder(date, Date), y = my_var), size = 3) +
+        geom_point(data = holt_res2, aes(date, pred), size = 3, color = "red") +
+        {if(input$showci2)geom_errorbar(data = holt_res2, aes(x = date, y = pred, ymin = upr, ymax = lwr), width = 0.1, color = "red")} +
+        xlab("") +
+        ylab("Mortality Rate") +
+        theme_bw() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
       
       ggplotly(p)
       
