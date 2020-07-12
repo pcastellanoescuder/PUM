@@ -1,0 +1,12 @@
+name: PUMapp
+title: PUMapp
+username:
+account: polcastellano
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2562904
+bundleId: 3383098
+url: https://polcastellano.shinyapps.io/PUMapp/
+when: 1594575730.70228
+asMultiple: FALSE
+asStatic: FALSE

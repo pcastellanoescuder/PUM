@@ -12,7 +12,7 @@ Repository managed by Marta Bofill ([@martabofillr](https://twitter.com/martabof
 
 ## shinyapps.io Version
 
-Please visit http://polcastellano.shinyapps.io/PUM to see a PUM's running version.   
+Please visit http://polcastellano.shinyapps.io/PUMapp to see a PUM's running version.   
 
 ## Code of Conduct
 
