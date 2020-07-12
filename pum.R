@@ -264,34 +264,70 @@ shiny::shinyApp(
             bs4Dash::bs4Card(
               width = 12,
               inputId = "inf1_card",
-              title = "",
+              title = "Risk Difference",
               status = "info",
               solidHeader = FALSE,
               collapsible = TRUE,
               collapsed = TRUE,
               closable = FALSE,
-              DT::dataTableOutput("")
+              selectizeInput("pre1", "Month 1:", 
+                             choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
+                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
+                                         "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
+                             selected = "Feb 1855"),
+              selectizeInput("post1", "Month 2:", 
+                             choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
+                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
+                                         "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
+                             selected = "Jan 1856"),
+              numericInput("alpha1", "alpha", value = 0.025),
+              selectizeInput("feat_inf1", "Feature to test", choices = c("Disease", "Wounds", "Other"), selected = "Disease"),
+              DT::dataTableOutput("prop")
               ),
             bs4Dash::bs4Card(
               width = 12,
               inputId = "inf2_card",
-              title = "Risk ratio",
+              title = "Risk Ratio",
               status = "danger",
               solidHeader = FALSE,
               collapsible = TRUE,
               collapsed = TRUE,
               closable = FALSE,
+              selectizeInput("pre2", "Month 1:", 
+                             choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
+                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
+                                         "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
+                             selected = "Feb 1855"),
+              selectizeInput("post2", "Month 2:", 
+                             choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
+                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
+                                         "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
+                             selected = "Jan 1856"),
+              numericInput("alpha2", "alpha", value = 0.025),
+              selectizeInput("feat_inf2", "Feature to test", choices = c("Disease", "Wounds", "Other"), selected = "Disease"),
               DT::dataTableOutput("risk")
               ),
             bs4Dash::bs4Card(
               width = 12,
               inputId = "inf3_card",
-              title = "Odds ratio",
+              title = "Odds Ratio",
               status = "success",
               solidHeader = FALSE,
               collapsible = TRUE,
               collapsed = TRUE,
               closable = FALSE,
+              selectizeInput("pre3", "Month 1:", 
+                             choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
+                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
+                                         "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
+                             selected = "Feb 1855"),
+              selectizeInput("post3", "Month 2:", 
+                             choices = c("Apr 1854", "May 1854", "Jun 1854", "Jul 1854", "Aug 1854", "Sep 1854", "Oct 1854", "Nov 1854", "Dec 1854",
+                                         "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
+                                         "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
+                             selected = "Jan 1856"),
+              numericInput("alpha3", "alpha", value = 0.025),
+              selectizeInput("feat_inf3", "Feature to test", choices = c("Disease", "Wounds", "Other"), selected = "Disease"),
               DT::dataTableOutput("odds")
               )
             )
@@ -538,9 +574,125 @@ shiny::shinyApp(
 
     })
     
+    ## INFERENCE --------------------------------------------------------------
+    
+    ## RISK DIFFERENCE -------------------------------------------------------------
+    
+    output$prop <- DT::renderDataTable({
+      
+      source("tests.R")
+      
+      alpha <- input$alpha1
+      time1 <- input$pre1
+      time2 <- input$post1
+      to_anal <- input$feat_inf1
+      
+      data_inf <- Nightingale %>%
+        mutate(date = paste0(Month, " ", Year),
+               pDisease = Disease/Army,
+               pWounds = Wounds/Army,
+               pOther = Other/Army) %>%
+        filter(date == time1 | date == time2) %>%
+        select_at(vars(contains(to_anal) | contains("Army"))) %>%
+        select_at(vars(starts_with("p") | contains("Army"))) %>%
+        select(Army, everything())
+      
+      phat_group0 <- data_inf[1,2]
+      phat_group1 <- data_inf[2,2]
+      samplesize0 <- data_inf[1,1]
+      samplesize1 <- data_inf[2,1]
+      
+      res <- diffg_p(phat_group1 = phat_group1, phat_group0 = phat_group0, 
+                     samplesize0 = samplesize0, samplesize1 = samplesize1, alpha = alpha)
+      
+      res_table <- data.frame(Prob0 = round(res$prob0, 3), Prob1 = round(res$prob1, 3), 
+                              RiskDifference = round(res$difference, 3), test = round(res$test, 3), Reject_H0 = res$reject)
+      
+      DT::datatable(
+        res_table,
+        class = 'cell-border stripe',
+        rownames = FALSE)
+    })
+    
+    ## RISK RATIO -------------------------------------------------------------
+    
+    output$risk <- DT::renderDataTable({
+      
+      source("tests.R")
+      
+      alpha <- input$alpha2
+      time1 <- input$pre2
+      time2 <- input$post2
+      to_anal <- input$feat_inf2
+      
+      data_inf <- Nightingale %>%
+        mutate(date = paste0(Month, " ", Year),
+               pDisease = Disease/Army,
+               pWounds = Wounds/Army,
+               pOther = Other/Army) %>%
+        filter(date == time1 | date == time2) %>%
+        select_at(vars(contains(to_anal) | contains("Army"))) %>%
+        select_at(vars(starts_with("p") | contains("Army"))) %>%
+        select(Army, everything())
+      
+      phat_group0 <- data_inf[1,2]
+      phat_group1 <- data_inf[2,2]
+      samplesize0 <- data_inf[1,1]
+      samplesize1 <- data_inf[2,1]
+      
+      res <- diffg_rr(phat_group1 = phat_group1, phat_group0 = phat_group0, 
+                      samplesize0 = samplesize0, samplesize1 = samplesize1, alpha = alpha)
+      
+      res_table <- data.frame(Prob0 = round(res$prob0, 3), Prob1 = round(res$prob1, 3), 
+                              RiskRatio = round(res$riskratio, 3), test = round(res$test, 3), Reject_H0 = res$reject)
+
+      DT::datatable(
+        res_table,
+        class = 'cell-border stripe',
+        rownames = FALSE)
+    })
+    
+    ## ODDS RATIO -------------------------------------------------------------
+    
+    output$odds <- DT::renderDataTable({
+      
+      source("tests.R")
+      
+      alpha <- input$alpha3
+      time1 <- input$pre3
+      time2 <- input$post3
+      to_anal <- input$feat_inf3
+      
+      data_inf <- Nightingale %>%
+        mutate(date = paste0(Month, " ", Year),
+               pDisease = Disease/Army,
+               pWounds = Wounds/Army,
+               pOther = Other/Army) %>%
+        filter(date == time1 | date == time2) %>%
+        select_at(vars(contains(to_anal) | contains("Army"))) %>%
+        select_at(vars(starts_with("p") | contains("Army"))) %>%
+        select(Army, everything())
+      
+      phat_group0 <- data_inf[1,2]
+      phat_group1 <- data_inf[2,2]
+      samplesize0 <- data_inf[1,1]
+      samplesize1 <- data_inf[2,1]
+      
+      res <- diffg_or(phat_group1 = phat_group1, phat_group0 = phat_group0, 
+                      samplesize0 = samplesize0, samplesize1 = samplesize1, alpha = alpha)
+      
+      res_table <- data.frame(Prob0 = round(res$prob0, 3), Prob1 = round(res$prob1, 3), 
+                              OddsRatio = round(res$oddsratio, 3), test = round(res$test, 3), Reject_H0 = res$reject)
+      
+      DT::datatable(
+        res_table,
+        class = 'cell-border stripe',
+        rownames = FALSE)
+    })
+    
     ## PREDICTION -------------------------------------------------------------
     
-    ## LINEAR MODEL ----------------------------------------------------------
+    ## LINEAR MODEL -----------------------------------------------------------
     
     output$pred_plot <- renderPlotly({
       
