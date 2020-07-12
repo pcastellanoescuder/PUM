@@ -261,6 +261,19 @@ shiny::shinyApp(
         bs4TabItem(
           tabName = "inference",
           fluidRow(
+            
+            bs4Dash::bs4Card(
+              width = 12,
+              inputId = "description_inf_card",
+              title = "Analysis Information",
+              status = "light",
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = FALSE,
+              closable = FALSE,
+              includeMarkdown("mds/inference.md")
+            ),
+            
             bs4Dash::bs4Card(
               width = 12,
               inputId = "inf1_card",
@@ -284,6 +297,7 @@ shiny::shinyApp(
               selectizeInput("feat_inf1", "Feature to test", choices = c("Disease", "Wounds", "Other"), selected = "Disease"),
               DT::dataTableOutput("prop")
               ),
+            
             bs4Dash::bs4Card(
               width = 12,
               inputId = "inf2_card",
@@ -307,6 +321,7 @@ shiny::shinyApp(
               selectizeInput("feat_inf2", "Feature to test", choices = c("Disease", "Wounds", "Other"), selected = "Disease"),
               DT::dataTableOutput("risk")
               ),
+            
             bs4Dash::bs4Card(
               width = 12,
               inputId = "inf3_card",
@@ -338,6 +353,19 @@ shiny::shinyApp(
         bs4TabItem(
           tabName = "prediction",
           fluidRow(
+            
+            bs4Dash::bs4Card(
+              width = 12,
+              inputId = "description_pred_card",
+              title = "Prediction Information",
+              status = "light",
+              solidHeader = FALSE,
+              collapsible = TRUE,
+              collapsed = FALSE,
+              closable = FALSE,
+              includeMarkdown("mds/prediction.md")
+            ),
+            
             bs4Dash::bs4Card(
               width = 12,
               inputId = "pred_card",
@@ -352,7 +380,7 @@ shiny::shinyApp(
                                          "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
                                          "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
                              selected = "Mar 1856"),
-              numericInput("start", "Number of months to build the model", value = 10),
+              numericInput("start", "How many previous months do you want to use for prediction?", value = 10),
               selectizeInput("to_pred", "Feature to predict", choices = c("Disease.rate", "Wounds.rate", "Other.rate"), selected = "Disease.rate"),
               prettySwitch("showci", "Show CI", fill = TRUE, status = "info"),
               plotlyOutput("pred_plot")
@@ -371,7 +399,7 @@ shiny::shinyApp(
                                          "Jan 1855", "Feb 1855", "Mar 1855", "Apr 1855", "May 1855", "Jun 1855", "Jul 1855", "Aug 1855", 
                                          "Sep 1855", "Oct 1855", "Nov 1855", "Dec 1855", "Jan 1856", "Feb 1856", "Mar 1856"),
                              selected = "Mar 1856"),
-              numericInput("start2", "Number of months to build the model", value = 10),
+              numericInput("start2", "How many previous months do you want to use for prediction?", value = 10),
               selectizeInput("to_pred2", "Feature to predict", choices = c("Disease.rate", "Wounds.rate", "Other.rate"), selected = "Disease.rate"),
               prettySwitch("showci2", "Show CI", fill = TRUE, status = "danger"),
               plotlyOutput("pred_plot2")

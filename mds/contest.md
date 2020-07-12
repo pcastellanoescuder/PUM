@@ -2,5 +2,6 @@ Aiming at commemorating the 200th anniversary of the birth of Florence Nightinga
 
 **pum!** shiny app is our contribution to this contest.       
 
-https://github.com/rladies/spain_nightingale/
-  
+  - Contest: https://github.com/rladies/spain_nightingale/     
+
+  - Shiny source code: https://github.com/pcastellanoescuder/PUM
