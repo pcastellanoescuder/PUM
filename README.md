@@ -1,4 +1,4 @@
-# Welcome to _pum_ Repository <img src='logos/logo.png' align="right" height="150"/>
+# Welcome to _pum_ Repository <img src='aux/logos/logo.png' align="right" height="150"/>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
