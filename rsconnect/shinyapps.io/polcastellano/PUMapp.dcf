@@ -5,8 +5,8 @@ account: polcastellano
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2562904
-bundleId: 3383420
+bundleId: 3492885
 url: https://polcastellano.shinyapps.io/PUMapp/
-when: 1594585254.79562
+when: 1596965988.42302
 asMultiple: FALSE
 asStatic: FALSE

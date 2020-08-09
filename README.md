@@ -1,10 +1,10 @@
-# Welcome to **pum** Repository <img src='logos/logo.png' align="right" height="150"/>
+# Welcome to _pum_ Repository <img src='logos/logo.png' align="right" height="150"/>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This repository contains the code we used for the "Nightingale Contest Spain" created by [@RLadiesBIO](https://twitter.com/RLadiesBIO) (https://github.com/rladies/spain_nightingale/).
 
-Repository managed by Marta Bofill ([@martabofillr](https://twitter.com/martabofillr)), Guillermo Villacampa ([@G_Villacampa](https://twitter.com/G_Villacampa)) and Pol Castellano ([@polcastellano_](https://twitter.com/polcastellano_)).      
+Repository managed by Marta Bofill ([@martabofillr](https://twitter.com/martabofillr)), Pol Castellano ([@polcastellano_](https://twitter.com/polcastellano_)) and Guillermo Villacampa ([@G_Villacampa](https://twitter.com/G_Villacampa)).      
 
 ## Run Local
 
